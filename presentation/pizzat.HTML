@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Аналіз продажів піцерії — Презентація проєкту</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #D8CDBC;
+            --sidebar-bg: #222222;
+            --card-bg: #FFFFFF;
+            --text-main: #222222;
+            --text-muted: #666666;
+            --accent: #C65127;
+            --accent-hover: #A5411E;
+            --code-bg: #1E2229;
+            --code-text: #EFE9DF;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-sidebar {
+            width: 280px;
+            background-color: var(--sidebar-bg);
+            color: #FFFFFF;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 20px;
+            box-shadow: 5px 0 20px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+
+        .sidebar-header .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .sidebar-header img.logo {
+            width: 45px;
+            height: 45px;
+            object-fit: cover;
+            border-radius: 50%;
+            background: #fff;
+        }
+
+        .sidebar-header h1 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            max-height: calc(100vh - 250px);
+            padding-right: 5px;
+        }
+
+        .nav-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .nav-menu::-webkit-scrollbar-thumb {
+            background: #444;
+            border-radius: 4px;
+        }
+
+        .nav-item {
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            color: #CCCCCC;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(255,255,255,0.08);
+            color: #FFFFFF;
+        }
+
+        .nav-item.active {
+            background-color: var(--accent);
+            color: #FFFFFF;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 20px;
+        }
+
+        .control-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            background-color: #333333;
+            color: #FFFFFF;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .btn:hover {
+            background-color: var(--accent);
+        }
+
+        .btn-print {
+            background-color: var(--accent);
+        }
+        .btn-print:hover {
+            background-color: var(--accent-hover);
+        }
+
+        .presentation-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slides-wrapper {
+            flex: 1;
+            position: relative;
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: calc(100% - 80px);
+            height: calc(100% - 80px);
+            background-color: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px;
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            overflow-y: auto;
+        }
+
+        .slide.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .slide-header {
+            margin-bottom: 15px;
+            border-bottom: 2px solid #F0ECE1;
+            padding-bottom: 10px;
+        }
+
+        .slide-header h2 {
+            font-size: 1.5rem;
+            color: var(--text-main);
+            font-weight: 700;
+        }
+
+        .slide-header p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .slide-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            overflow: hidden;
+        }
+
+        .slide-footer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #F0ECE1;
+            padding-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .card-box {
+            background: #FDFBF7;
+            border: 1px solid #EAE3D2;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .kpi-card {
+            background: #FDFBF7;
+            border: 1px solid #EAE3D2;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .kpi-card .value {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 4px;
+        }
+
+        .sql-container {
+            background-color: var(--code-bg);
+            color: var(--code-text);
+            font-family: 'Fira Code', monospace;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent);
+        }
+        
+        .sql-comment {
+            color: #8E9082;
+            font-style: italic;
+        }
+
+        @media print {
+            body { background: #FFFFFF; height: auto; overflow: visible; }
+            .app-sidebar { display: none; }
+            .presentation-container { height: auto; overflow: visible; }
+            .slides-wrapper { padding: 0; display: block; }
+            .slide {
+                position: relative;
+                display: flex !important;
+                opacity: 1 !important;
+                page-break-after: always;
+                break-after: page;
+                height: 100vh;
+                box-shadow: none;
+                border: 1px solid #ccc;
+                margin-bottom: 20px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="app-sidebar">
+        <div class="sidebar-header">
+            <div class="logo-container">
+                <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=100&auto=format&fit=crop&q=60" alt="Логотип" class="logo">
+                <h1>Аналіз продажів піцерії</h1>
+            </div>
+            <ul class="nav-menu" id="navMenu"></ul>
+        </div>
+        <div class="sidebar-footer">
+            <div class="control-btns">
+                <button class="btn" onclick="prevSlide()">← Назад</button>
+                <button class="btn" onclick="nextSlide()">Далі →</button>
+            </div>
+            <button class="btn btn-print" onclick="window.print()">🖨️️ Друк / PDF</button>
+        </div>
+    </aside>
+
+    <main class="presentation-container">
+        <div class="slides-wrapper" id="slidesWrapper">
+
+            <!-- СЛАЙД 1 -->
+            <section class="slide" data-title="1. Титульний слайд">
+                <div class="slide-header">
+                    <h2>Операційний та фінансовий аналіз піцерії</h2>
+                    <p>Підсумковий проєкт з бізнес-аналітики та візуалізації даних</p>
+                </div>
+                <div class="slide-body" style="justify-content: center; align-items: center; text-align: center;">
+                    <h1 style="font-size: 2.3rem; color: var(--accent); margin-bottom: 15px;">🍕 Pizza Sales Analytics</h1>
+                    <p style="font-size: 1.1rem; max-width: 600px; color: var(--text-muted);">
+                        Комплексне дослідження річних показників продажу, поведінки покупців, оптимізація робочих годин та побудова інтерактивного дашборду.
+                    </p>
+                    <div style="margin-top: 25px; font-size: 0.9rem; background: #FDFBF7; padding: 15px; border-radius: 8px; border: 1px solid #EAE3D2; display: inline-block;">
+                        <p><strong>Автор:</strong> Олександр Колесниченко</p>
+                        <p><strong>Курс:</strong> Data Analytics & Visualization Expert</p>
+                        <p><strong>Дата:</strong> Жовтень 2026</p>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 1 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 2 -->
+            <section class="slide" data-title="2. Ситуація та питання">
+                <div class="slide-header">
+                    <h2>Бізнес-контекст та аналітичні питання</h2>
+                    <p>Вихідні умови задачі та ключові виклики піцерії</p>
+                </div>
+                <div class="slide-body">
+                    <div class="card-box">
+                        <h3 style="margin-bottom: 8px; color: var(--accent);">Бізнес-ситуація</h3>
+                        <p style="font-size: 0.9rem;">Мережа піцерій стикнулася зі спадом річного тренду та нерівномірним навантаженням. Необхідно провести аналіз транзакцій за рік, виявити драйвери виручки та слабкі годинні зони.</p>
+                    </div>
+                    <div class="card-box">
+                        <h3 style="margin-bottom: 8px; color: var(--accent);">Ключові аналітичні питання (8 питань проєкту):</h3>
+                        <ul style="padding-left: 20px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 4px;">
+                            <li>1. Загальна виручка, кількість замовлень та середній чек?</li>
+                            <li>2. У який місяць пік продажів, а в який — мінімум?</li>
+                            <li>3. Які години доби є найбільш навантаженими?</li>
+                            <li>4. Як розподіляються замовлення за днями тижня (теплова карта)?</li>
+                            <li>5. Які категорії та розміри піци генерують найбільше доходу?</li>
+                            <li>6. Які години є найбільш збитковими (слабкими)?</li>
+                            <li>7. Чому спостерігається зниження річного тренду виручки?</li>
+                            <li>8. Які заходи допоможуть зупинити спад і підвищити ефективність?</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 2 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+   <!-- СЛАЙД 3 -->
+<section class="slide" data-title="3. Дані та джерела">
+    <div class="slide-header">
+        <h2>Архітектура та структура реляційної бази даних</h2>
+        <p>Зв'язки між таблицями датасету Pizza Place Sales (4 основні сутності)</p>
+    </div>
+    <div class="slide-body" style="overflow-y: auto;">
+        <div style="display: flex; flex-direction: column; gap: 15px;">
+            
+            <!-- Блок со схемой: увеличен max-height для чёткой видимости подписей -->
+            <div class="card-box" style="display: flex; flex-direction: column; align-items: center; padding: 12px; background: #FFFFFF; width: 100%;">
+                <img src="db_schema/database_schema.jpg" alt="Схема бази даних" style="width: 100%; max-height: 380px; object-fit: contain; border-radius: 4px;">
+            </div>
+
+            <!-- Нижний блок с текстовым описанием -->
+            <div class="grid-2" style="gap: 15px;">
+                <div class="card-box" style="padding: 12px 15px;">
+                    <h3 style="margin-bottom: 6px; font-size: 0.9rem; color: var(--accent);">Особливості моделі даних</h3>
+                    <p style="font-size: 0.8rem; line-height: 1.4;">
+                        База даних спроєктована за нормалізованою схемою. Таблиця <code>order_details</code> виконує роль зв'язуючої сутності між чеками (<code>orders</code>) та довідником піц (<code>pizzas</code>), що дозволяє точно фіксувати кількість і вартість кожної позиції.
+                    </p>
+                </div>
+                <div class="card-box" style="padding: 12px 15px;">
+                    <h3 style="margin-bottom: 6px; font-size: 0.9rem; font-weight: 700;">Ключові показники датасету</h3>
+                    <ul style="padding-left: 16px; font-size: 0.8rem; line-height: 1.4; display: flex; flex-direction: column; gap: 3px;">
+                        <li><strong>Загальний обсяг:</strong> понад 16 000 чеків за рік.</li>
+                        <li><strong>Товарна база:</strong> 4 категорії меню та різні варіанти розмірів.</li>
+                        <li><strong>Цілісність:</strong> використання первинних (PK) та зовнішніх (FK) ключів.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="slide-footer-info"><span>Слайд 3 з 14</span><span>Pizza Corp</span></div>
+</section>
+
+            <!-- СЛАЙД 4 -->
+            <section class="slide" data-title="4. Очищення даних">
+                <div class="slide-header">
+                    <h2>Очищення, перетворення та підготовка даних</h2>
+                    <p>Етапи підготовки датасету до аналізу та побудови візуалізацій</p>
+                </div>
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 8px; color: var(--accent);">ЕТЛ Процес</h3>
+                            <ul style="padding-left: 18px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 6px;">
+                                <li><strong>Перевірка пропусків:</strong> Контроль цілісності ключів між таблицями.</li>
+                                <li><strong>Форматування:</strong> Виділення годин та днів тижня.</li>
+                                <li><strong>Метрики:</strong> Розрахунок загальної вартості позиції (`quantity * price`).</li>
+                            </ul>
+                        </div>
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 8px; color: var(--accent);">SQL-закладка</h3>
+                            <div class="sql-container">
+                                <span class="sql-comment">-- Приклад агрегації годин</span><br>
+                                SELECT EXTRACT(HOUR FROM order_time) AS h,<br>
+                                &nbsp;&nbsp;COUNT(DISTINCT order_id) AS orders<br>
+                                FROM orders GROUP BY 1 ORDER BY orders DESC;
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 4 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 5: ПИТАННЯ 1 -->
+            <section class="slide" data-title="5. Питання 1: Загальні KPI">
+                <div class="slide-header">
+                    <h2>Аналітичне питання 1: Основні фінансові показники</h2>
+                    <p>Яка загальна виручка, кількість замовлень та середній чек за звітний період?</p>
+                </div>
+                <div class="slide-body">
+                    <div class="kpi-row">
+                        <div class="kpi-card"><span>Виручка</span><div class="value">$817,860</div></div>
+                        <div class="kpi-card"><span>Одиниці</span><div class="value">49,574</div></div>
+                        <div class="kpi-card"><span>Замовлення</span><div class="value">16,382</div></div>
+                        <div class="kpi-card"><span>Середній чек</span><div class="value">$38.31</div></div>
+                    </div>
+                    <div class="card-box">
+                        <h3 style="margin-bottom: 6px;">Висновок</h3>
+                        <p style="font-size: 0.9rem;">Заклад має стабільний обсяг транзакцій з високим середнім чеком ($38.31), що свідчить про комплексні замовлення кількох піц в одному чеку.</p>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 5 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 6: ПИТАННЯ 2 -->
+            <section class="slide" data-title="6. Питання 2: Сезонність">
+                <div class="slide-header">
+                    <h2>Аналітичне питання 2: Динаміка та сезонність</h2>
+                    <p>У який місяць зафіксовано пік продажів, а в який — мінімальні показники?</p>
+                </div>
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <div class="card-box" style="border-left: 4px solid #2ECC71;">
+                            <h3 style="color: #2ECC71; margin-bottom: 6px;">📈 Піковий місяць: Липень</h3>
+                            <p style="font-size: 1.3rem; font-weight: 700; margin-bottom: 4px;">$72,558</p>
+                            <p style="font-size: 0.85rem;">Висока активність завдяки туризму та сезону відпусток.</p>
+                        </div>
+                        <div class="card-box" style="border-left: 4px solid #E74C3C;">
+                            <h3 style="color: #E74C3C; margin-bottom: 6px;">📉 Слабкий місяць: Вересень</h3>
+                            <p style="font-size: 1.3rem; font-weight: 700; margin-bottom: 4px;">$64,028</p>
+                            <p style="font-size: 0.85rem;">Зниження виручки через закінчення літнього сезону.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 6 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 7: ПИТАННЯ 3-4 -->
+            <section class="slide" data-title="7. Питання 3-4: Години пік">
+                <div class="slide-header">
+                    <h2>Аналітичне питання 3-4: Операційне навантаження</h2>
+                    <p>Які години доби та дні тижня є найгарячішими за кількістю замовлень?</p>
+                </div>
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 6px; color: var(--accent);">Пікові години</h3>
+                            <ul style="padding-left: 18px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 4px;">
+                                <li><strong>Обід:</strong> 12:00 – 13:00</li>
+                                <li><strong>Вечір:</strong> 17:00 – 19:00 (п'ятниця, субота)</li>
+                                <li>Понад 400 замовлень на місяць у пікових слотах.</li>
+                            </ul>
+                        </div>
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 6px; color: var(--accent);">Дні тижня</h3>
+                            <p style="font-size: 0.85rem;">Найбільша інтенсивність замовлень спостерігається у п'ятницю, суботу та четвер. Початок тижня має помірне навантаження.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 7 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 8: ПИТАННЯ 5 -->
+            <section class="slide" data-title="8. Питання 5: Асортимент і категорії">
+                <div class="slide-header">
+                    <h2>Аналітичне питання 5: Асортиментні лідери</h2>
+                    <p>Які категорії піци та які розміри генерують основну частку доходу?</p>
+                </div>
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 6px; color: var(--accent);">Драйвери продажів</h3>
+                            <p style="font-size: 0.85rem; margin-bottom: 8px;">Аналіз за категоріями (Classic, Supreme, Veggie, Chicken) та розмірами (S, M, L, XL) показує чітку концентрацію попиту.</p>
+                            <ul style="padding-left: 18px; font-size: 0.85rem; display: flex; flex-direction: column; gap: 4px;">
+                                <li>Найпопулярніші категорії: Classic та Supreme.</li>
+                                <li>Розмір Large (L) забезпечує найбільшу сумарну виручку.</li>
+                            </ul>
+                        </div>
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 6px; color: var(--accent);">Структура замовлень</h3>
+                            <p style="font-size: 0.85rem;">Клієнти найчастіше обирають піци середнього та великого розміру у складі комбінованих замовлень.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 8 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 9: ПИТАННЯ 6 -->
+            <section class="slide" data-title="9. Питання 6: Слабкі години роботи">
+                <div class="slide-header">
+                    <h2>Аналітичне питання 6: Збиткові годинні зони</h2>
+                    <p>Які години є найбільш збитковими (10:00 та 23:00) та що з ними робити?</p>
+                </div>
+                <div class="slide-body">
+                    <div class="grid-2">
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 6px; color: var(--accent);">Проблематика годин 10:00 та 23:00</h3>
+                            <p style="font-size: 0.85rem; margin-bottom: 8px;">Аналіз показує мінімальні значення (1–2 замовлення на місяць) у цих часових слотах.</p>
+                            <p style="font-size: 0.85rem;"><strong>Висновок:</strong> Утримання закладу відкритим у цей час є економічно невигідним через витрати на персонал та комунальні послуги.</p>
+                        </div>
+                        <div class="card-box">
+                            <h3 style="margin-bottom: 6px; color: var(--accent);">Операційне рішення</h3>
+                            <p style="font-size: 0.85rem;">Скорочення годин роботи на початку та в кінці дня дозволить суттєво оптимізувати операційні витрати без втрати основної виручки.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 9 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 10: ПИТАННЯ 7-8 -->
+            <section class="slide" data-title="10. Питання 7-8: Спад і рішення">
+                <div class="slide-header">
+                    <h2>Аналітичне питання 7-8: Загальний спад тренду та рішення</h2>
+                    <p>Чому спостерігається зниження річного тренду виручки та як його зупинити?</p>
+                </div>
+                <div class="slide-body">
+                    <div class="card-box">
+                        <h3 style="margin-bottom: 6px; color: var(--accent);">Аналіз зниження тренду</h3>
+                        <p style="font-size: 0.85rem; margin-bottom: 6px;">Лінія тренду вказує на системний спад показників. Основні причини — відтік постійних клієнтів та брак промо-активностей у міжсезоння.</p>
+                    </div>
+                    <div class="card-box">
+                        <h3 style="margin-bottom: 6px; color: var(--accent);">Стратегічні кроки</h3>
+                        <p style="font-size: 0.85rem;">Впровадження комбо-наборів для стимулювання середнього чека та проведення цільових win-back кампаній.</p>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 10 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+        <!-- СЛАЙД 11: TABLEAU DASHBOARD -->
+            <section class="slide" data-title="11. Інтерактивний дашборд" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div class="slide-header" style="margin-bottom: 8px; padding-bottom: 5px;">
+                    <h2>Інтерактивний дашборд аналітики продажів</h2>
+                    <p style="font-size: 0.8rem;">Повна панель керування ключовими показниками у реальному часі</p>
+                </div>
+
+                <!-- ДВУХКОЛОНОЧНЫЙ КОНТЕЙНЕР: DASHBOARD + QUICK JUMP PANEL -->
+                <div class="slide-body" style="flex: 1; display: flex; flex-direction: row; gap: 15px; overflow: hidden; padding: 0; align-items: stretch;">
+                    
+                    <!-- ЛЕВАЯ КОЛОНКА: TABLEAU DASHBOARD (РАСТЯНУТ НА ВСЕ ПОЛЕ) -->
+                    <div style="flex: 1; min-width: 0; height: 100%; display: flex; background: #FAFAFA; border-radius: 8px; border: 1px solid #EAE3D2; overflow: hidden;">
+                        <!-- НАЧАЛО TABLEAU EMBED КОДА -->
+                       <div class='tableauPlaceholder' id='viz1791119396072' style='position: relative'><noscript><a href='#'><img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pi&#47;pizza_dashboard_17907019488410&#47;OperationsStaffing&#47;1_rss.png' style='border: none' /></a></noscript><object class='tableauViz'  style='display:none;'><param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> <param name='embed_code_version' value='3' /> <param name='site_root' value='' /><param name='name' value='pizza_dashboard_17907019488410&#47;OperationsStaffing' /><param name='tabs' value='yes' /><param name='toolbar' value='yes' /><param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;images&#47;pi&#47;pizza_dashboard_17907019488410&#47;OperationsStaffing&#47;1.png' /> <param name='animate_transition' value='yes' /><param name='display_static_image' value='yes' /><param name='display_spinner' value='yes' /><param name='display_overlay' value='yes' /><param name='display_count' value='yes' /><param name='language' value='en-US' /><param name='filter' value='publish=yes' /></object></div>                <script type='text/javascript'>                    var divElement = document.getElementById('viz1791119396072');                    var vizElement = divElement.getElementsByTagName('object')[0];                    vizElement.style.width='1280px';vizElement.style.height='770px';                    var scriptElement = document.createElement('script');                    scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                </script>
+                        <!-- КОНЕЦ TABLEAU EMBED КОДА -->
+                    </div>
+
+                    <!-- ПРАВАЯ КОЛОНКА: ШВИДКА НАВІГАЦІЯ ПО ПИТАННЯХ БІЗНЕСУ (QUICK JUMP) -->
+                    <div style="width: 280px; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px; background: #FDFBF7; border: 1px solid #EAE3D2; border-radius: 8px; padding: 12px; overflow-y: auto;">
+                        <h3 style="font-size: 0.9rem; color: var(--accent); border-bottom: 2px solid var(--accent); padding-bottom: 4px; margin-bottom: 2px;">
+                            🚀 Швидка навігація
+                        </h3>
+                        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px;">
+                            Перемикайте вкладки на дашборді вгорі для відповідного розрізу:
+                        </p>
+
+                        <!-- Картка 1 -->
+                        <div style="background: #FFFFFF; border: 1px solid #E3DBCB; border-left: 4px solid #C65127; border-radius: 6px; padding: 8px;">
+                            <h4 style="font-size: 0.8rem; color: var(--text-main); margin-bottom: 2px;">📈 Revenue Trends</h4>
+                            <p style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.3;">
+                                <strong>Динаміка та Маркетинг:</strong> Аналіз річної виручки ($817.8K), сезонних піків та оновлення тренду.
+                            </p>
+                        </div>
+
+                        <!-- Картка 2 -->
+                        <div style="background: #FFFFFF; border: 1px solid #E3DBCB; border-left: 4px solid #27AE60; border-radius: 6px; padding: 8px;">
+                            <h4 style="font-size: 0.8rem; color: var(--text-main); margin-bottom: 2px;">⏰ Operations & Staffing</h4>
+                            <p style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.3;">
+                                <strong>Завантаження закладу:</strong> Погодинна теплова карта, пікові години та оптимізація змін персоналу.
+                            </p>
+                        </div>
+
+                        <!-- Картка 3 -->
+                        <div style="background: #FFFFFF; border: 1px solid #E3DBCB; border-left: 4px solid #2980B9; border-radius: 6px; padding: 8px;">
+                            <h4 style="font-size: 0.8rem; color: var(--text-main); margin-bottom: 2px;">🍕 Menu Analysis</h4>
+                            <p style="font-size: 0.72rem; color: var(--text-muted); line-height: 1.3;">
+                                <strong>Асортимент та хіти:</strong> Рейтинг піц (Top N), розподіл за категоріями та розмірами.
+                            </p>
+                        </div>
+
+                        <!-- Подсказка по фильтрам -->
+                        <div style="margin-top: auto; background: rgba(198, 81, 39, 0.08); border-radius: 6px; padding: 8px; border: 1px dashed var(--accent);">
+                            <p style="font-size: 0.7rem; color: var(--accent); font-weight: 600;">💡 Інтерактивність:</p>
+                            <p style="font-size: 0.7rem; color: var(--text-main); margin-top: 2px;">
+                                Клікніть на будь-який сегмент або діаграму, щоб застосувати Cross-Filtering.
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="slide-footer-info" style="padding-top: 5px; margin-top: 5px;"><span>Слайд 11 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 12 -->
+            <section class="slide" data-title="12. Ключові інсайти">
+                <div class="slide-header">
+                    <h2>Ключові інсайти дослідження</h2>
+                    <p>Головні висновки за результатами аналізу даних</p>
+                </div>
+                <div class="slide-body">
+                    <div class="card-box" style="border-left: 4px solid var(--accent);">
+                        <h3 style="margin-bottom: 4px;">1. Сезонність та вересневий провал</h3>
+                        <p style="font-size: 0.9rem;">Липень — пік ($72,558), вересень — глибокий мінімум ($64,028), що вимагає промо-акцій наприкінці літа.</p>
+                    </div>
+                    <div class="card-box" style="border-left: 4px solid var(--accent);">
+                        <h3 style="margin-bottom: 4px;">2. Пікове навантаження</h3>
+                        <p style="font-size: 0.9rem;">П'ятничні/суботні вечори (17:00–19:00) та обід (12:00–13:00) генерують понад 400 замовлень на місяць у слотах.</p>
+                    </div>
+                    <div class="card-box" style="border-left: 4px solid var(--accent);">
+                        <h3 style="margin-bottom: 4px;">3. Нерентабельні години</h3>
+                        <p style="font-size: 0.9rem;">О 10:00 та 23:00 замовлення майже відсутні, що створює зайві витрати на утримання відкритих дверей.</p>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 12 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 13 -->
+            <section class="slide" data-title="13. Рекомендації">
+                <div class="slide-header">
+                    <h2>Бізнес-рекомендації</h2>
+                    <p>Конкретні заходи для оптимізації діяльності піцерії</p>
+                </div>
+                <div class="slide-body">
+                    <div class="card-box">
+                        <h3 style="color: var(--accent); margin-bottom: 4px;">1. Оптимізація графіку роботи</h3>
+                        <p style="font-size: 0.85rem;"><strong>Обґрунтування:</strong> О 10:00 та 23:00 замовлень немає. <strong>Ефект:</strong> Зсув відкриття на 11:00 та закриття о 22:00 зменшить витрати на 5-8%.</p>
+                    </div>
+                    <div class="card-box">
+                        <h3 style="color: var(--accent); margin-bottom: 4px;">2. Управління персоналом</h3>
+                        <p style="font-size: 0.85rem;"><strong>Обґрунтування:</strong> Піки перевищують 400 замовлень. <strong>Ефект:</strong> Додаткові кухарі на неповну зміну прискорять обслуговування.</p>
+                    </div>
+                    <div class="card-box">
+                        <h3 style="color: var(--accent); margin-bottom: 4px;">3. Маркетинг у міжсезоння</h3>
+                        <p style="font-size: 0.85rem;"><strong>Обґрунтування:</strong> Загальний спад річного тренду. <strong>Ефект:</strong> Комбо-набори та win-back розсилки підвищать середній чек.</p>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 13 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+            <!-- СЛАЙД 14 -->
+            <section class="slide" data-title="14. Фінальний слайд">
+                <div class="slide-header">
+                    <h2>Дякую за увагу!</h2>
+                    <p>Контакти та посилання на репозиторій проєкту</p>
+                </div>
+                <div class="slide-body" style="justify-content: center; align-items: center; text-align: center;">
+                    <div class="card-box" style="max-width: 480px; width: 100%; display: inline-block;">
+                        <h3 style="margin-bottom: 12px; color: var(--accent);">Проєкт завершено успішно</h3>
+                        <p style="margin-bottom: 8px;"><strong>Автор:</strong> Олександр Колесниченко</p>
+                        <p style="margin-bottom: 8px;"><strong>GitHub:</strong> github.com/username/pizza-analytics</p>
+                        <p style="margin-bottom: 15px;"><strong>Tableau Public:</strong> public.tableau.com/app/profile/oleksandr</p>
+                    </div>
+                </div>
+                <div class="slide-footer-info"><span>Слайд 14 з 14</span><span>Pizza Corp</span></div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const navMenu = document.getElementById('navMenu');
+        let currentSlide = 0;
+
+        // Генерація пунктів меню на основі заголовків слайдів
+        slides.forEach((slide, index) => {
+            const title = slide.getAttribute('data-title') || `Слайд ${index + 1}`;
+            const li = document.createElement('li');
+            li.className = `nav-item ${index === 0 ? 'active' : ''}`;
+            li.textContent = title;
+            li.onclick = () => goToSlide(index);
+            navMenu.appendChild(li);
+        });
+
+        function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.toggle('active', index === currentSlide);
+            });
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateSlides();
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlides();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlides();
+            }
+        }
+
+        // Керування клавішами стрілок
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+                prevSlide();
+            }
+        });
+    </script>
+</body>
+</html>
