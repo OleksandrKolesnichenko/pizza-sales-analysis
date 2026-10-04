@@ -44,6 +44,9 @@
 * 📊 **Інтерактивний дашборд у Tableau Public:**  
   [Переглянути Tableau Dashboard]([https://public.tableau.com/views/pizza_dashboard_17907019488410/RevenueTrendsMarketing](https://public.tableau.com/views/pizza_dashboard_17907019488410/MenuAnalysis?:language=en-US&publish=yes&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link)
 
+  Матеріали аналізу запросів sql [https://docs.google.com/document/d/1Zz41-KLIlMGpggOpt8VASMS-TE72Dt49neR09-ZSMwQ/edit?usp=sharing
+](https://docs.google.com/document/d/1Zz41-KLIlMGpggOpt8VASMS-TE72Dt49neR09-ZSMwQ/edit?usp=sharing)
+
 * 🖥️ **Презентація проєкту (HTML):**  
   `pizzat_2.HTML` *(відкрийте файл у будь-якому браузері)*
 
